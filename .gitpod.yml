@@ -5,4 +5,8 @@ tasks:
   - init: |
       echo 'TODO: build project'
     command: |
-      echo 'TODO: start app'
+      deno run --allow-net main.ts
+
+vscode:
+  extensions:
+    - denoland.vscode-deno
