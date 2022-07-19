@@ -1,12 +1,11 @@
-image:
-  file: .gitpod.Dockerfile
 
 tasks:
   - init: |
       echo 'TODO: build project'
     command: |
-      deno run --allow-net main.ts
+      echo 'TODO: run project'
 
 vscode:
   extensions:
-    - denoland.vscode-deno
+    - ms-azuretools.vscode-docker
+    - rust-lang.rust
