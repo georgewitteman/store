@@ -4,7 +4,7 @@ import {
   post,
   redirect,
   contentType,
-} from "https://denopkg.com/syumai/dinatra/mod.ts";
+} from "./deps.ts";
 
 const greeting = "<h1>Hello From Deno on Fly!</h1>";
 
