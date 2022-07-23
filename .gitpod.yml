@@ -4,8 +4,3 @@ tasks:
       echo 'TODO: build project'
     command: |
       echo 'TODO: run project'
-
-vscode:
-  extensions:
-    - ms-azuretools.vscode-docker
-    - rust-lang.rust
