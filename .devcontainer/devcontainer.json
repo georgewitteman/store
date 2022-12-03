@@ -1,0 +1,6 @@
+// https://aka.ms/devcontainer.json
+{
+	"name": "Rust",
+	// https://github.com/devcontainers/images/blob/main/src/rust
+	"image": "mcr.microsoft.com/devcontainers/rust"
+}
