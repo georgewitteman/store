@@ -2,5 +2,8 @@
 {
 	"name": "Rust",
 	// https://github.com/devcontainers/images/blob/main/src/rust
-	"image": "mcr.microsoft.com/devcontainers/rust"
+	"image": "mcr.microsoft.com/devcontainers/rust",
+	"features": {
+		"ghcr.io/devcontainers/features/aws-cli": {}
+	}
 }
