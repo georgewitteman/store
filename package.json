@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/georgewitteman/store/issues"
   },
-  "homepage": "https://github.com/georgewitteman/store/tree/main#readme"
+  "homepage": "https://github.com/georgewitteman/store/tree/main#readme",
+  "devDependencies": {
+    "prettier": "2.8.7"
+  }
 }
