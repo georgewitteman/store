@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { add } from "./index.js";
+import { add } from "./add.js";
 
 describe("add", () => {
   it("should add two numbers", () => {
