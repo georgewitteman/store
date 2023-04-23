@@ -24,6 +24,7 @@
     "prettier": "2.8.7"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "prettier --write --ignore-unknown",
+    "**/*.test.js": "npm test"
   }
 }
