@@ -1,0 +1,20 @@
+{
+  "name": "store",
+  "version": "1.0.0",
+  "description": "store",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/georgewitteman/store.git#main"
+  },
+  "author": "George Witteman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/georgewitteman/store/issues"
+  },
+  "homepage": "https://github.com/georgewitteman/store/tree/main#readme"
+}
