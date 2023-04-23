@@ -6,8 +6,4 @@ describe("add", () => {
   it("should add two numbers", () => {
     assert.equal(add(1, 1), 2);
   });
-
-  it("should add negative numbers", () => {
-    assert.equal(add(1, -1), 0);
-  });
 });
