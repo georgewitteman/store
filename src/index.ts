@@ -5,7 +5,7 @@ import * as util from "node:util";
 async function handler(req: http.IncomingMessage, res: http.ServerResponse) {
   const url = new URL(req.url!, `http://${req.headers.host}`);
   console.log("URL: %s", url.toString());
-  res.writeHead(10 / 0, { "Content-Type": "application/json" });
+  res.writeHead(200, { "Content-Type": "application/json" });
   res.end(
     JSON.stringify({
       status: res.statusCode,
@@ -30,5 +30,3 @@ server.listen(8000, () => {
 console.log(
   Object.fromEntries(server.eventNames().map((e) => [e, server.listeners(e)]))
 );
-
-Promise.any([Promise.resolve(true), Promise.reject()]);
