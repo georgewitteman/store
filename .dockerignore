@@ -1,2 +1,7 @@
-node_modules
+.dockerignore
+.git
+.gitignore
+.husky
 build
+Dockerfile
+node_modules
