@@ -14,7 +14,7 @@ USER node
 WORKDIR /usr/src/app
 COPY package*.json ./
 # https://typicode.github.io/husky/#/?id=with-npm
-RUN npm ci --omit=dev --ignore-scripts
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 COPY --from=builder /usr/src/app/build ./build
 
