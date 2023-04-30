@@ -8,6 +8,10 @@ export class Response {
     this.response = response;
   }
 
+  write(data: string) {
+    this.response.write(data);
+  }
+
   writeHead(statusCode: StatusCode, headers: Record<string, string>) {
     this.response.writeHead(statusCode, headers);
   }

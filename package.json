@@ -22,6 +22,7 @@
   "homepage": "https://github.com/georgewitteman/store/tree/main#readme",
   "devDependencies": {
     "@types/node": "^18.16.0",
+    "@types/pg": "^8.6.6",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.1",
     "prettier": "2.8.7",
@@ -31,6 +32,7 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
+    "pg": "^8.10.0",
     "zod": "^3.21.4"
   }
 }
