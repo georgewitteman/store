@@ -1,25 +1,93 @@
-import * as dns from "node:dns";
+// import * as dns from "node:dns";
 import * as http from "node:http";
-import * as util from "node:util";
-import { Router } from "./router.js";
+// import * as util from "node:util";
+import { z } from "zod";
 
-const router = new Router();
+const STATUS_CODES = {
+  200: "OK",
+  404: "Not Found",
+  500: "Not Found",
+} as const;
 
-router.route("/", async (req, res) => {
+// export type JsonObject = {[Key in string]: JsonValue} & {[Key in string]?: JsonValue | undefined};
+// export type JsonArray = JsonValue[] | readonly JsonValue[];
+// export type JsonPrimitive = string | number | boolean | null;
+// export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+
+class Response<T> {
+  private readonly serverResponse: http.ServerResponse<http.IncomingMessage>;
+
+  constructor(serverResponse: http.ServerResponse) {
+    this.serverResponse = serverResponse;
+  }
+
+  send(statusCode: keyof typeof STATUS_CODES, body: T) {
+    this.serverResponse.writeHead(statusCode);
+    this.serverResponse.end(body);
+  }
+}
+
+function createRoute<S extends z.ZodType<unknown>>(
+  schema: S,
+  handler: (req: z.infer<S>, res: Response<unknown>) => Promise<void>
+) {
+  return new Route(schema, handler);
+}
+
+class Route<S extends z.ZodType<unknown>> {
+  schema: S;
+  handler: (req: z.infer<S>, res: Response<unknown>) => Promise<void>;
+
+  constructor(
+    schema: S,
+    handler: (req: z.infer<S>, res: Response<unknown>) => Promise<void>
+  ) {
+    this.schema = schema;
+    this.handler = handler;
+  }
+}
+
+const route1 = createRoute(
+  z.object({ path: z.literal("/"), query: z.object({ foo: z.string() }) }),
+  async (req: { query: { foo: string } }, res: Response<string>) => {
+    res.send(200, req.query.foo);
+  }
+);
+
+const route2 = createRoute(
+  z.object({ path: z.literal("/two") }),
+  async (req: { path: "/two" }, res: Response<string>) => {
+    res.send(200, req.path);
+  }
+);
+
+function handleError(res: Response<unknown>) {
+  return (e: unknown) => {
+    res.send(500, e);
+  };
+}
+
+function handleRequest(req: http.IncomingMessage, res: http.ServerResponse) {
   const url = new URL(req.url!, `http://${req.headers.host}`);
-  console.log("URL: %s", url.toString());
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify({
-      // status: res.statusCode,
-      // statusCode: http.STATUS_CODES[res.statusCode],
-      data: "Hello World!",
-      "google.com": await util.promisify(dns.lookup)("google.com"),
-    })
-  );
-});
+  console.log(url.href);
+  const query = Object.fromEntries(url.searchParams.entries());
+  const response = new Response<unknown>(res);
+  const request = { path: url.pathname, query };
 
-const server = http.createServer(router.handleRequest.bind(router));
+  const route1Parsed = route1.schema.safeParse(request);
+  if (route1Parsed.success) {
+    route1.handler(route1Parsed.data, response).catch(handleError(response));
+    return;
+  }
+  const route2Parsed = route2.schema.safeParse(request);
+  if (route2Parsed.success) {
+    route2.handler(route2Parsed.data, response).catch(handleError(response));
+    return;
+  }
+  response.send(500, "error");
+}
+
+const server = http.createServer(handleRequest);
 
 server.listen(8000, () => {
   const address = server.address();

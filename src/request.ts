@@ -1,17 +1,11 @@
-import * as http from "node:http";
+// import { Headers } from "./types.js";
 
-export class Request {
-  private request: http.IncomingMessage;
+export class Request<H> {
+  readonly headers: H;
+  readonly url: string;
 
-  constructor(request: http.IncomingMessage) {
-    this.request = request;
-  }
-
-  get headers() {
-    return this.request.headers;
-  }
-
-  get url() {
-    return this.request.url;
+  constructor(url: string, headers: H) {
+    this.headers = headers;
+    this.url = url;
   }
 }
