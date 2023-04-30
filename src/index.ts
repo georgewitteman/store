@@ -2,15 +2,16 @@ import { PrismaClient } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import Koa from "koa";
 import Router from "@koa/router";
+import { koaBody } from "koa-body";
 
 const prisma = new PrismaClient();
 
 const app = new Koa();
 const router = new Router();
 
+// app.use(koaBody());
+
 router.get("/", async (ctx) => {
-  // @ts-expect-error
-  asdf.asdf;
   const products = await prisma.product.findMany();
   ctx.body = `
 <!doctype html>
@@ -30,21 +31,35 @@ router.get("/", async (ctx) => {
         <ul>
           <li>Id: ${product.id}</li>
           <li>Name: ${product.name}</li>
+          <li>
+            <form method="POST" action="/delete">
+              <input type="hidden" id="id" name="id" value="${product.id}" />
+              <button type="submit">Delete</button>
+            </form>
+          </li>
         </ul>
       </details>
       `
       )
       .join("")}
-    <details>
-      <summary>iRobot Roomba 675 <strong>Robot Vacuum</strong></summary>
-      <ul>
-        <li>Model #: GTD635HSM0SS (on interior), GDT635HSMSS (online)
-        <li><a href="https://www.geappliances.com/appliance/GE-Top-Control-with-Stainless-Steel-Interior-Door-Dishwasher-with-Sanitize-Cycle-Dry-Boost-GDT635HSMSS">GE Product Page</a></li>
-      </ul>
-    </details>
   </body>
 </html>
 `;
+});
+
+router.post("/delete", async (ctx) => {
+  const idRaw = ctx.request.body["id"];
+  if (typeof idRaw !== "string") {
+    console.warn("Not string %s (%s)", idRaw, typeof idRaw);
+    ctx.redirect("/");
+    return;
+  }
+  const idNumber = parseInt(idRaw, 10);
+  await prisma.product.delete({
+    where: { id: idNumber },
+  });
+  console.log("Deleted %s", idNumber);
+  ctx.redirect("/");
 });
 
 router.get("/create", async (ctx) => {
@@ -58,4 +73,6 @@ router.get("/create", async (ctx) => {
 
 app.use(router.routes());
 
-app.listen(8000);
+app.listen(8000, "0.0.0.0", () => {
+  console.log("Listening...");
+});
