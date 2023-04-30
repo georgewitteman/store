@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const app = new Koa();
 const router = new Router();
 
-// app.use(koaBody());
+app.use(koaBody());
 
 router.get("/", async (ctx) => {
   const products = await prisma.product.findMany();
