@@ -1,73 +1,8 @@
 import * as http from "node:http";
-import { z } from "zod";
-
-type Method = "GET" | "POST" | "OPTIONS";
-
-export class Response {
-  private response: http.ServerResponse;
-
-  constructor(response: http.ServerResponse) {
-    this.response = response;
-  }
-
-  writeHead(statusCode: number, headers: Record<string, string>) {
-    this.response.writeHead(statusCode, headers);
-  }
-
-  end(body: string) {
-    this.response.end(body);
-  }
-
-  send(statusCode: number, body: string) {
-    this.response.writeHead(statusCode);
-    this.response.end(body);
-  }
-}
-
-export class Request<M extends Method, Q, J> {
-  query: Q;
-  url: URL;
-  pathParts: string[];
-  method: M;
-  json: J;
-
-  constructor(url: URL, method: M, pathParts: string[], query: Q, json: J) {
-    this.url = url;
-    this.method = method;
-    this.pathParts = pathParts;
-    this.query = query;
-    this.json = json;
-  }
-}
-
-type RouteOptions<M extends Method, Q, J> = {
-  path: z.ZodTuple;
-  method: M;
-  query?: z.ZodType<Q>;
-  json?: z.ZodType<J>;
-};
-
-export class Route<M extends Method, Q, J> {
-  options: RouteOptions<M, Q, J>;
-  handler: (req: Request<M, Q, J>, res: Response) => Promise<void>;
-
-  constructor(
-    options: RouteOptions<M, Q, J>,
-    handler: (req: Request<M, Q, J>, res: Response) => Promise<void>
-  ) {
-    this.options = options;
-    this.handler = handler;
-  }
-
-  match(path: string[], method: string, query: unknown, json: unknown) {
-    return (
-      this.options.method === method &&
-      this.options.path.safeParse(path).success &&
-      (this.options.query?.safeParse(query).success ?? true) &&
-      (this.options.json?.safeParse(json).success ?? true)
-    );
-  }
-}
+import { Method } from "./types.js";
+import { Route, RouteOptions } from "./route.js";
+import { Request } from "./request.js";
+import { Response } from "./response.js";
 
 async function rawBody(req: http.IncomingMessage): Promise<string> {
   const chunks: Buffer[] = [];
