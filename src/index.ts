@@ -1,22 +1,25 @@
 import * as dns from "node:dns";
 import * as http from "node:http";
 import * as util from "node:util";
+import { Router } from "./router.js";
 
-async function handler(req: http.IncomingMessage, res: http.ServerResponse) {
+const router = new Router();
+
+router.route("/", async (req, res) => {
   const url = new URL(req.url!, `http://${req.headers.host}`);
   console.log("URL: %s", url.toString());
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(
     JSON.stringify({
-      status: res.statusCode,
-      statusCode: http.STATUS_CODES[res.statusCode],
+      // status: res.statusCode,
+      // statusCode: http.STATUS_CODES[res.statusCode],
       data: "Hello World!",
       "google.com": await util.promisify(dns.lookup)("google.com"),
     })
   );
-}
+});
 
-const server = http.createServer(handler);
+const server = http.createServer(router.handleRequest.bind(router));
 
 server.listen(8000, () => {
   const address = server.address();
