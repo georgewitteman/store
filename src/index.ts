@@ -1,34 +1,18 @@
-import { z } from "zod";
-import { App } from "./app.js";
-import PG from "pg";
+import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "node:crypto";
+import Koa from "koa";
+import Router from "@koa/router";
 
-async function execute<S extends z.ZodType<unknown>>(
-  client: PG.Client,
-  schema: S,
-  query: string
-): Promise<z.infer<S>> {
-  const queryResult = await client.query<Record<string, unknown>>(query);
-  console.log(queryResult);
-  return schema.parse(queryResult.rows);
-}
+const prisma = new PrismaClient();
 
-const app = new App(async (_req, res) => {
-  const client = new PG.Client({
-    user: "postgres",
-    host: "localhost",
-    database: "postgres",
-    password: "postgres",
-    port: 5432,
-  });
-  await client.connect();
-  const [row] = await execute(
-    client,
-    z.tuple([z.object({ now: z.date() })]),
-    "SELECT NOW()"
-  );
-  await client.end();
-  res.writeHead(200, {});
-  res.end(`
+const app = new Koa();
+const router = new Router();
+
+router.get("/", async (ctx) => {
+  // @ts-expect-error
+  asdf.asdf;
+  const products = await prisma.product.findMany();
+  ctx.body = `
 <!doctype html>
 <html lang="en">
   <head>
@@ -37,7 +21,20 @@ const app = new App(async (_req, res) => {
     <title>Hi there</title>
   </head>
   <body>
-    <h1>This is an H1 ${row.now}</h1>
+    <h1>This is an H1</h1>
+    ${products
+      .map(
+        (product) => `
+      <details>
+        <summary>${product.name}</summary>
+        <ul>
+          <li>Id: ${product.id}</li>
+          <li>Name: ${product.name}</li>
+        </ul>
+      </details>
+      `
+      )
+      .join("")}
     <details>
       <summary>iRobot Roomba 675 <strong>Robot Vacuum</strong></summary>
       <ul>
@@ -47,7 +44,18 @@ const app = new App(async (_req, res) => {
     </details>
   </body>
 </html>
-`);
+`;
 });
 
-app.listen();
+router.get("/create", async (ctx) => {
+  const blah = await prisma.product.create({
+    data: {
+      name: `Test Product ${randomUUID()}`,
+    },
+  });
+  ctx.body = blah;
+});
+
+app.use(router.routes());
+
+app.listen(8000);
