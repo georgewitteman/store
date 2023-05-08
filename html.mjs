@@ -26,11 +26,26 @@ export async function page() {
         // style(css),
       ),
       body(
-        h1("Heading 1"),
-        "This is some body content",
+        PageComponent(),
       ),
     ),
   )
+}
+
+function PageComponent() {
+  return div(
+    null,
+    h1("Heading 1"),
+    ...("This is some body content".split(" ").map(s => span(null, s))),
+  )
+}
+
+function div(attributes, ...children) {
+  return el("div", attributes, ...children);
+}
+
+function span(attributes, ...children) {
+  return el("span", attributes, ...children);
 }
 
 function style(cssContent) {
