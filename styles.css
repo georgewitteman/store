@@ -1,0 +1,14 @@
+body {
+  background: #ffffff;
+  color: #333333;
+  font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: normal;
+  /* -webkit-font-smoothing: antialiased; */
+  line-height: 1.5;
+  margin: 0;
+  text-rendering: optimizeLegibility;
+  max-width: 24rem;
+  margin: 0.5rem auto;
+}
